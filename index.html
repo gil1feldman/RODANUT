@@ -131,12 +131,12 @@
       banner.src = "https://raw.githubusercontent.com/gil1feldman/RODANUT/main/%D7%A8%D7%95%D7%93%D7%A0%D7%95%D7%AA_%D7%91%D7%90%D7%A0%D7%A8_%D7%A6%D7%A8.png";
 
       const selected = Array.from(document.querySelectorAll("input[type='checkbox']")).map(cb => cb.checked);
-      const lineHeight = 48;
+      const lineHeight = 56;
       const margin = 20;
 
       banner.onload = function () {
         const width = 800;
-        ctx.font = "36px Arial";
+        ctx.font = "44px Arial";
         ctx.direction = 'rtl';
         ctx.textAlign = 'right';
 
@@ -146,7 +146,7 @@
         });
 
         const imageHeight = uploadedImage ? 320 : 0;
-        const footerHeight = 40;
+        const footerHeight = 50;
         const totalHeight = banner.height + totalLines * lineHeight + imageHeight + margin * 5 + footerHeight;
 
         canvas.width = width;
@@ -158,6 +158,8 @@
         ctx.drawImage(banner, 0, 0, width, banner.height);
 
         let currentY = banner.height + margin;
+        ctx.font = "44px Arial";
+
         points.forEach((point, i) => {
           const text = (i + 1) + ". " + point;
           const color = selected[i] ? "red" : "black";
@@ -171,7 +173,7 @@
           currentY += 300 + margin;
         }
 
-        ctx.font = "20px Arial";
+        ctx.font = "26px Arial";
         ctx.fillStyle = "black";
         ctx.fillText('מבוסס על הספר "רודנות בחסות החוק" של קים ליין שפלי', width - margin, currentY + margin);
 
