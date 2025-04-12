@@ -131,16 +131,15 @@
       banner.src = "https://raw.githubusercontent.com/gil1feldman/RODANUT/main/%D7%A8%D7%95%D7%93%D7%A0%D7%95%D7%AA_%D7%91%D7%90%D7%A0%D7%A8_%D7%A6%D7%A8.png";
 
       const selected = Array.from(document.querySelectorAll("input[type='checkbox']")).map(cb => cb.checked);
-      const lineHeight = 40;
+      const lineHeight = 48;
       const margin = 20;
 
       banner.onload = function () {
         const width = 800;
-        ctx.font = "28px Arial";
+        ctx.font = "36px Arial";
         ctx.direction = 'rtl';
         ctx.textAlign = 'right';
 
-        // חישוב גובה כולל
         let totalLines = 0;
         points.forEach((point, i) => {
           totalLines += estimateLineCount(ctx, (i + 1) + ". " + point, 760);
@@ -172,7 +171,6 @@
           currentY += 300 + margin;
         }
 
-        // ציור שורת הקרדיט
         ctx.font = "20px Arial";
         ctx.fillStyle = "black";
         ctx.fillText('מבוסס על הספר "רודנות בחסות החוק" של קים ליין שפלי', width - margin, currentY + margin);
