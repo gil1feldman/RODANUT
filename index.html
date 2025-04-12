@@ -131,14 +131,16 @@
       banner.src = "https://raw.githubusercontent.com/gil1feldman/RODANUT/main/%D7%A8%D7%95%D7%93%D7%A0%D7%95%D7%AA_%D7%91%D7%90%D7%A0%D7%A8_%D7%A6%D7%A8.png";
 
       const selected = Array.from(document.querySelectorAll("input[type='checkbox']")).map(cb => cb.checked);
-      const lineHeight = 26;
+      const lineHeight = 30;
       const margin = 20;
 
       banner.onload = function () {
         const width = 800;
         ctx.font = "20px Arial";
+        ctx.direction = 'rtl';
+        ctx.textAlign = 'right';
 
-        // חישוב גובה כולל מראש
+        // חישוב גובה כולל
         let totalLines = 0;
         points.forEach((point, i) => {
           totalLines += estimateLineCount(ctx, (i + 1) + ". " + point, 760);
@@ -156,7 +158,6 @@
         ctx.drawImage(banner, 0, 0, width, banner.height);
 
         let currentY = banner.height + margin;
-        ctx.font = "20px Arial";
         points.forEach((point, i) => {
           const text = (i + 1) + ". " + point;
           const color = selected[i] ? "red" : "black";
@@ -186,7 +187,7 @@
         const testLine = line + words[n] + ' ';
         const testWidth = ctx.measureText(testLine).width;
         if (testWidth > maxWidth && line !== '') {
-          ctx.fillText(line, x, y);
+          ctx.fillText(line, x + maxWidth, y);
           line = words[n] + ' ';
           y += lineHeight;
           linesUsed++;
@@ -194,7 +195,7 @@
           line = testLine;
         }
       }
-      ctx.fillText(line, x, y);
+      ctx.fillText(line, x + maxWidth, y);
       linesUsed++;
 
       return linesUsed;
