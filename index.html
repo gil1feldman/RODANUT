@@ -2,7 +2,7 @@
 <html lang="he">
 <head>
   <meta charset="UTF-8">
-  <title>כלי ליצירת תמונה להעברת מסר</title>
+  <title>רודנות בחסות החוק - תיעוד</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -28,11 +28,14 @@
       max-width: 800px;
       margin-bottom: 20px;
     }
+    #canvasContainer {
+      display: none;
+    }
   </style>
 </head>
 <body>
   <img class="banner" src="https://raw.githubusercontent.com/gil1feldman/RODANUT/main/%D7%A8%D7%95%D7%93%D7%A0%D7%95%D7%AA_%D7%91%D7%90%D7%A0%D7%A8_%D7%A6%D7%A8.png" alt="באנר רודנות">
-  <h1>כלי ליצירת תמונה להעברת מסר</h1>
+  <h1>רודנות בחסות החוק - תיעוד</h1>
   <form id="messageForm">
     <h3>סמן את הנקודות הרלוונטיות:</h3>
     <div id="checkboxes"></div>
@@ -40,9 +43,11 @@
     <label>הדבק תמונה: <input type="file" id="imageInput" accept="image/*"></label>
     <br><br>
     <button type="button" onclick="generatePreview()">צור</button>
+    <button type="button" onclick="downloadImage()">הורד כתמונה</button>
   </form>
 
   <div class="preview" id="previewSection"></div>
+  <div id="canvasContainer"><canvas id="outputCanvas"></canvas></div>
 
   <script>
     const points = [
@@ -70,6 +75,17 @@
       checkboxContainer.appendChild(document.createElement("br"));
     });
 
+    let uploadedImage = null;
+
+    document.getElementById("imageInput").addEventListener("change", function(e) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        uploadedImage = new Image();
+        uploadedImage.src = e.target.result;
+      };
+      reader.readAsDataURL(this.files[0]);
+    });
+
     function generatePreview() {
       const preview = document.getElementById("previewSection");
       preview.innerHTML = "";
@@ -85,17 +101,67 @@
       });
 
       preview.appendChild(list);
-
-      const imageInput = document.getElementById("imageInput");
-      if (imageInput.files.length > 0) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const img = document.createElement("img");
-          img.src = e.target.result;
-          preview.appendChild(img);
-        };
-        reader.readAsDataURL(imageInput.files[0]);
+      if (uploadedImage) {
+        const img = document.createElement("img");
+        img.src = uploadedImage.src;
+        preview.appendChild(img);
       }
+    }
+
+    function downloadImage() {
+      const canvas = document.getElementById("outputCanvas");
+      const ctx = canvas.getContext("2d");
+      const selected = Array.from(document.querySelectorAll("input[type='checkbox']"))
+        .map((cb, i) => cb.checked);
+
+      const banner = new Image();
+      banner.crossOrigin = "anonymous";
+      banner.src = "https://raw.githubusercontent.com/gil1feldman/RODANUT/main/%D7%A8%D7%95%D7%93%D7%A0%D7%95%D7%AA_%D7%91%D7%90%D7%A0%D7%A8_%D7%A6%D7%A8.png";
+
+      banner.onload = function () {
+        const width = 800;
+        const lineHeight = 30;
+        const margin = 20;
+        const baseHeight = (points.length * lineHeight) + (uploadedImage ? 400 : 0) + banner.height + 3 * margin;
+
+        canvas.width = width;
+        canvas.height = baseHeight;
+
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.drawImage(banner, 0, 0, width, banner.height);
+
+        ctx.fillStyle = "black";
+        ctx.font = "20px Arial";
+
+        points.forEach((point, i) => {
+          const y = banner.height + margin + i * lineHeight;
+          ctx.fillStyle = selected[i] ? "red" : "black";
+          ctx.fillText((i + 1) + ". " + point, margin, y);
+        });
+
+        if (uploadedImage) {
+          uploadedImage.onload = () => {
+            ctx.drawImage(uploadedImage, 0, banner.height + margin + points.length * lineHeight + margin, 400, 300);
+            saveCanvas();
+          };
+          if (uploadedImage.complete) {
+            ctx.drawImage(uploadedImage, 0, banner.height + margin + points.length * lineHeight + margin, 400, 300);
+            saveCanvas();
+          }
+        } else {
+          saveCanvas();
+        }
+      };
+    }
+
+    function saveCanvas() {
+      const canvas = document.getElementById("outputCanvas");
+      const link = document.createElement('a');
+      link.download = 'message.png';
+      link.href = canvas.toDataURL();
+      link.click();
     }
   </script>
 </body>
