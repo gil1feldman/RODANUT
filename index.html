@@ -136,27 +136,12 @@
 
       banner.onload = function () {
         const width = 800;
-        let currentY = banner.height + margin;
+        ctx.font = "20px Arial";
 
-        // נחשב גובה משוער
+        // חישוב גובה כולל מראש
         let totalLines = 0;
-        const ctxTemp = document.createElement('canvas').getContext('2d');
-        ctxTemp.font = "20px Arial";
         points.forEach((point, i) => {
-          const text = (i + 1) + ". " + point;
-          const words = text.split(' ');
-          let line = '';
-          let lines = 1;
-          words.forEach(word => {
-            const testLine = line + word + ' ';
-            if (ctxTemp.measureText(testLine).width > 760) {
-              line = word + ' ';
-              lines++;
-            } else {
-              line = testLine;
-            }
-          });
-          totalLines += lines;
+          totalLines += estimateLineCount(ctx, (i + 1) + ". " + point, 760);
         });
 
         const imageHeight = uploadedImage ? 320 : 0;
@@ -170,12 +155,12 @@
 
         ctx.drawImage(banner, 0, 0, width, banner.height);
 
+        let currentY = banner.height + margin;
         ctx.font = "20px Arial";
         points.forEach((point, i) => {
           const text = (i + 1) + ". " + point;
           const color = selected[i] ? "red" : "black";
-          ctx.fillStyle = color;
-          const linesUsed = wrapText(ctx, text, margin, currentY, 760, lineHeight);
+          const linesUsed = wrapText(ctx, text, margin, currentY, 760, lineHeight, color);
           currentY += linesUsed * lineHeight;
         });
 
@@ -191,17 +176,16 @@
       };
     }
 
-    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight, color) {
       const words = text.split(' ');
       let line = '';
-      let linesUsed = 1;
+      let linesUsed = 0;
 
+      ctx.fillStyle = color;
       for (let n = 0; n < words.length; n++) {
         const testLine = line + words[n] + ' ';
-        const metrics = ctx.measureText(testLine);
-        const testWidth = metrics.width;
-
-        if (testWidth > maxWidth && n > 0) {
+        const testWidth = ctx.measureText(testLine).width;
+        if (testWidth > maxWidth && line !== '') {
           ctx.fillText(line, x, y);
           line = words[n] + ' ';
           y += lineHeight;
@@ -211,7 +195,25 @@
         }
       }
       ctx.fillText(line, x, y);
+      linesUsed++;
+
       return linesUsed;
+    }
+
+    function estimateLineCount(ctx, text, maxWidth) {
+      const words = text.split(' ');
+      let line = '';
+      let lines = 0;
+      for (let i = 0; i < words.length; i++) {
+        const testLine = line + words[i] + ' ';
+        if (ctx.measureText(testLine).width > maxWidth && line !== '') {
+          lines++;
+          line = words[i] + ' ';
+        } else {
+          line = testLine;
+        }
+      }
+      return lines + 1;
     }
   </script>
 </body>
