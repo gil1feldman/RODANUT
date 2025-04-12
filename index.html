@@ -87,16 +87,34 @@
     });
 
     function generatePreview() {
-      const preview = document.getElementById("previewSection");
-      preview.innerHTML = "";
+  const preview = document.getElementById("previewSection");
+  preview.innerHTML = "";
 
-      const selected = Array.from(document.querySelectorAll("input[type='checkbox']"))
-        .map((cb, i) => cb.checked);
+  // Add banner image
+  const bannerImg = document.createElement("img");
+  bannerImg.src = "https://raw.githubusercontent.com/gil1feldman/RODANUT/main/%D7%A8%D7%95%D7%93%D7%A0%D7%95%D7%AA_%D7%91%D7%90%D7%A0%D7%A8_%D7%A6%D7%A8.png";
+  bannerImg.className = "banner";
+  preview.appendChild(bannerImg);
 
-      const list = document.createElement("ul");
-      points.forEach((point, i) => {
-        const item = document.createElement("li");
-        item.innerHTML = selected[i] ? `<span class='highlight'>${point}</span>` : point;
+  const selected = Array.from(document.querySelectorAll("input[type='checkbox']"))
+    .map((cb, i) => cb.checked);
+
+  const list = document.createElement("ul");
+  points.forEach((point, i) => {
+    const item = document.createElement("li");
+    item.innerHTML = selected[i] ? `<span class='highlight'>${point}</span>` : point;
+    list.appendChild(item);
+  });
+
+  preview.appendChild(list);
+  if (uploadedImage) {
+    const img = document.createElement("img");
+    img.src = uploadedImage.src;
+    img.style.margin = "20px auto";
+    img.style.display = "block";
+    preview.appendChild(img);
+  }
+}</span>` : point;
         list.appendChild(item);
       });
 
