@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8">
+  <title>כלי ליצירת תמונה להעברת מסר</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      direction: rtl;
+      padding: 20px;
+    }
+    .highlight {
+      color: red;
+      font-weight: bold;
+    }
+    .preview {
+      margin-top: 30px;
+      border-top: 2px solid #ccc;
+      padding-top: 20px;
+    }
+    img {
+      max-width: 400px;
+      display: block;
+      margin-top: 20px;
+    }
+    .banner {
+      width: 100%;
+      max-width: 800px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <img class="banner" src="https://raw.githubusercontent.com/gil1feldman/RODANUT/main/%D7%A8%D7%95%D7%93%D7%A0%D7%95%D7%AA_%D7%91%D7%90%D7%A0%D7%A8_%D7%A6%D7%A8.png" alt="באנר רודנות">
+  <h1>כלי ליצירת תמונה להעברת מסר</h1>
+  <form id="messageForm">
+    <h3>סמן את הנקודות הרלוונטיות:</h3>
+    <div id="checkboxes"></div>
+    <br>
+    <label>הדבק תמונה: <input type="file" id="imageInput" accept="image/*"></label>
+    <br><br>
+    <button type="button" onclick="generatePreview()">צור</button>
+  </form>
+
+  <div class="preview" id="previewSection"></div>
+
+  <script>
+    const points = [
+      "ניצחון של המנהיג בבחירות דמוקרטיות",
+      "פירוק המנגנונים המגבילים את הרשות המבצעת",
+      "השתלטות על בית הנבחרים או הפיכת מוסד זה לבלתי רלוונטי",
+      "הכפפת בתי המשפט לרשות המבצעת - על ידי 'רפורמות' ומינוי נאמנים",
+      "הצבת נאמנים בתפקידי מפתח - (התובע הכללי, ועדת הבחירות המרכזית, הוועדה לבחירת שופטים וכדומה)",
+      "שינוי המפה התקשורתית, כך שכלי תקשורת ישמשו תיבת תהודה למסרי הממשלה",
+      "דה-לגיטימציה והגבלת פעילות של ארגוני חברה אזרחית ומפלגות האופוזיציה",
+      "שינוי חוקי הבחירות באופן שמבטיח ניצחון בבחירות עתידיות"
+    ];
+
+    const checkboxContainer = document.getElementById("checkboxes");
+    points.forEach((point, index) => {
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.id = "point" + index;
+      checkbox.value = index;
+      const label = document.createElement("label");
+      label.htmlFor = checkbox.id;
+      label.textContent = (index + 1) + ". " + point;
+      checkboxContainer.appendChild(checkbox);
+      checkboxContainer.appendChild(label);
+      checkboxContainer.appendChild(document.createElement("br"));
+    });
+
+    function generatePreview() {
+      const preview = document.getElementById("previewSection");
+      preview.innerHTML = "";
+
+      const selected = Array.from(document.querySelectorAll("input[type='checkbox']"))
+        .map((cb, i) => cb.checked);
+
+      const list = document.createElement("ul");
+      points.forEach((point, i) => {
+        const item = document.createElement("li");
+        item.innerHTML = selected[i] ? `<span class='highlight'>${point}</span>` : point;
+        list.appendChild(item);
+      });
+
+      preview.appendChild(list);
+
+      const imageInput = document.getElementById("imageInput");
+      if (imageInput.files.length > 0) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const img = document.createElement("img");
+          img.src = e.target.result;
+          preview.appendChild(img);
+        };
+        reader.readAsDataURL(imageInput.files[0]);
+      }
+    }
+  </script>
+</body>
+</html>
