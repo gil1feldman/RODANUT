@@ -114,17 +114,7 @@
     img.style.display = "block";
     preview.appendChild(img);
   }
-}</span>` : point;
-        list.appendChild(item);
-      });
-
-      preview.appendChild(list);
-      if (uploadedImage) {
-        const img = document.createElement("img");
-        img.src = uploadedImage.src;
-        preview.appendChild(img);
-      }
-    }
+}
 
     function downloadImage() {
       const canvas = document.getElementById("outputCanvas");
