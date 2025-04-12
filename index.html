@@ -97,13 +97,11 @@
       const preview = document.getElementById("previewSection");
       preview.innerHTML = "";
 
-      // Add banner
       const bannerImg = document.createElement("img");
       bannerImg.src = "https://raw.githubusercontent.com/gil1feldman/RODANUT/main/%D7%A8%D7%95%D7%93%D7%A0%D7%95%D7%AA_%D7%91%D7%90%D7%A0%D7%A8_%D7%A6%D7%A8.png";
       bannerImg.className = "banner";
       preview.appendChild(bannerImg);
 
-      // Selected points
       const selected = Array.from(document.querySelectorAll("input[type='checkbox']")).map(cb => cb.checked);
       const list = document.createElement("ul");
       points.forEach((point, i) => {
@@ -113,7 +111,6 @@
       });
       preview.appendChild(list);
 
-      // Uploaded image
       if (uploadedImage) {
         const imgWrapper = document.createElement("div");
         imgWrapper.className = "centered";
@@ -134,14 +131,36 @@
       banner.src = "https://raw.githubusercontent.com/gil1feldman/RODANUT/main/%D7%A8%D7%95%D7%93%D7%A0%D7%95%D7%AA_%D7%91%D7%90%D7%A0%D7%A8_%D7%A6%D7%A8.png";
 
       const selected = Array.from(document.querySelectorAll("input[type='checkbox']")).map(cb => cb.checked);
-      const lineHeight = 30;
+      const lineHeight = 26;
       const margin = 20;
 
       banner.onload = function () {
         const width = 800;
-        const listHeight = points.length * lineHeight;
+        let currentY = banner.height + margin;
+
+        // נחשב גובה משוער
+        let totalLines = 0;
+        const ctxTemp = document.createElement('canvas').getContext('2d');
+        ctxTemp.font = "20px Arial";
+        points.forEach((point, i) => {
+          const text = (i + 1) + ". " + point;
+          const words = text.split(' ');
+          let line = '';
+          let lines = 1;
+          words.forEach(word => {
+            const testLine = line + word + ' ';
+            if (ctxTemp.measureText(testLine).width > 760) {
+              line = word + ' ';
+              lines++;
+            } else {
+              line = testLine;
+            }
+          });
+          totalLines += lines;
+        });
+
         const imageHeight = uploadedImage ? 320 : 0;
-        const totalHeight = banner.height + listHeight + imageHeight + margin * 4;
+        const totalHeight = banner.height + totalLines * lineHeight + imageHeight + margin * 4;
 
         canvas.width = width;
         canvas.height = totalHeight;
@@ -153,15 +172,16 @@
 
         ctx.font = "20px Arial";
         points.forEach((point, i) => {
-          const y = banner.height + margin + i * lineHeight;
-          ctx.fillStyle = selected[i] ? "red" : "black";
-          ctx.fillText((i + 1) + ". " + point, margin, y);
+          const text = (i + 1) + ". " + point;
+          const color = selected[i] ? "red" : "black";
+          ctx.fillStyle = color;
+          const linesUsed = wrapText(ctx, text, margin, currentY, 760, lineHeight);
+          currentY += linesUsed * lineHeight;
         });
 
         if (uploadedImage) {
-          const imgY = banner.height + margin + listHeight + margin;
           const imgX = (width - 400) / 2;
-          ctx.drawImage(uploadedImage, imgX, imgY, 400, 300);
+          ctx.drawImage(uploadedImage, imgX, currentY + margin, 400, 300);
         }
 
         const link = document.createElement('a');
@@ -169,6 +189,29 @@
         link.href = canvas.toDataURL();
         link.click();
       };
+    }
+
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(' ');
+      let line = '';
+      let linesUsed = 1;
+
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        const metrics = ctx.measureText(testLine);
+        const testWidth = metrics.width;
+
+        if (testWidth > maxWidth && n > 0) {
+          ctx.fillText(line, x, y);
+          line = words[n] + ' ';
+          y += lineHeight;
+          linesUsed++;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line, x, y);
+      return linesUsed;
     }
   </script>
 </body>
