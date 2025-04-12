@@ -18,15 +18,21 @@
       border-top: 2px solid #ccc;
       padding-top: 20px;
     }
-    img {
-      max-width: 400px;
-      display: block;
-      margin-top: 20px;
-    }
     .banner {
       width: 100%;
       max-width: 800px;
       margin-bottom: 20px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .centered {
+      text-align: center;
+    }
+    img.preview-img {
+      max-width: 400px;
+      margin: 20px auto;
+      display: block;
     }
     #canvasContainer {
       display: none;
@@ -34,8 +40,9 @@
   </style>
 </head>
 <body>
-  <img class="banner" src="https://raw.githubusercontent.com/gil1feldman/RODANUT/main/%D7%A8%D7%95%D7%93%D7%A0%D7%95%D7%AA_%D7%91%D7%90%D7%A0%D7%A8_%D7%A6%D7%A8.png" alt="באנר רודנות">
+  <img class="banner" src="https://raw.githubusercontent.com/gil1feldman/RODANUT/main/%D7%A8%D7%95%D7%93%D7%A0%D7%95%D7%AA_%D7%91%D7%90%D7%A0%D7%A8_%D7%A6%D7%A8.png" alt="באנר">
   <h1>רודנות בחסות החוק - תיעוד</h1>
+
   <form id="messageForm">
     <h3>סמן את הנקודות הרלוונטיות:</h3>
     <div id="checkboxes"></div>
@@ -87,62 +94,64 @@
     });
 
     function generatePreview() {
-  const preview = document.getElementById("previewSection");
-  preview.innerHTML = "";
+      const preview = document.getElementById("previewSection");
+      preview.innerHTML = "";
 
-  // Add banner image
-  const bannerImg = document.createElement("img");
-  bannerImg.src = "https://raw.githubusercontent.com/gil1feldman/RODANUT/main/%D7%A8%D7%95%D7%93%D7%A0%D7%95%D7%AA_%D7%91%D7%90%D7%A0%D7%A8_%D7%A6%D7%A8.png";
-  bannerImg.className = "banner";
-  preview.appendChild(bannerImg);
+      // Add banner
+      const bannerImg = document.createElement("img");
+      bannerImg.src = "https://raw.githubusercontent.com/gil1feldman/RODANUT/main/%D7%A8%D7%95%D7%93%D7%A0%D7%95%D7%AA_%D7%91%D7%90%D7%A0%D7%A8_%D7%A6%D7%A8.png";
+      bannerImg.className = "banner";
+      preview.appendChild(bannerImg);
 
-  const selected = Array.from(document.querySelectorAll("input[type='checkbox']"))
-    .map((cb, i) => cb.checked);
+      // Selected points
+      const selected = Array.from(document.querySelectorAll("input[type='checkbox']")).map(cb => cb.checked);
+      const list = document.createElement("ul");
+      points.forEach((point, i) => {
+        const item = document.createElement("li");
+        item.innerHTML = selected[i] ? `<span class='highlight'>${point}</span>` : point;
+        list.appendChild(item);
+      });
+      preview.appendChild(list);
 
-  const list = document.createElement("ul");
-  points.forEach((point, i) => {
-    const item = document.createElement("li");
-    item.innerHTML = selected[i] ? `<span class='highlight'>${point}</span>` : point;
-    list.appendChild(item);
-  });
-
-  preview.appendChild(list);
-  if (uploadedImage) {
-    const img = document.createElement("img");
-    img.src = uploadedImage.src;
-    img.style.margin = "20px auto";
-    img.style.display = "block";
-    preview.appendChild(img);
-  }
-}
+      // Uploaded image
+      if (uploadedImage) {
+        const imgWrapper = document.createElement("div");
+        imgWrapper.className = "centered";
+        const img = document.createElement("img");
+        img.src = uploadedImage.src;
+        img.className = "preview-img";
+        imgWrapper.appendChild(img);
+        preview.appendChild(imgWrapper);
+      }
+    }
 
     function downloadImage() {
       const canvas = document.getElementById("outputCanvas");
       const ctx = canvas.getContext("2d");
-      const selected = Array.from(document.querySelectorAll("input[type='checkbox']"))
-        .map((cb, i) => cb.checked);
 
       const banner = new Image();
       banner.crossOrigin = "anonymous";
       banner.src = "https://raw.githubusercontent.com/gil1feldman/RODANUT/main/%D7%A8%D7%95%D7%93%D7%A0%D7%95%D7%AA_%D7%91%D7%90%D7%A0%D7%A8_%D7%A6%D7%A8.png";
 
+      const selected = Array.from(document.querySelectorAll("input[type='checkbox']")).map(cb => cb.checked);
+      const lineHeight = 30;
+      const margin = 20;
+
       banner.onload = function () {
         const width = 800;
-        const lineHeight = 30;
-        const margin = 20;
-        const baseHeight = (points.length * lineHeight) + (uploadedImage ? 400 : 0) + banner.height + 3 * margin;
+        const listHeight = points.length * lineHeight;
+        const imageHeight = uploadedImage ? 320 : 0;
+        const totalHeight = banner.height + listHeight + imageHeight + margin * 4;
 
         canvas.width = width;
-        canvas.height = baseHeight;
+        canvas.height = totalHeight;
 
         ctx.fillStyle = "white";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, width, totalHeight);
 
         ctx.drawImage(banner, 0, 0, width, banner.height);
 
-        ctx.fillStyle = "black";
         ctx.font = "20px Arial";
-
         points.forEach((point, i) => {
           const y = banner.height + margin + i * lineHeight;
           ctx.fillStyle = selected[i] ? "red" : "black";
@@ -150,26 +159,16 @@
         });
 
         if (uploadedImage) {
-          uploadedImage.onload = () => {
-            ctx.drawImage(uploadedImage, 0, banner.height + margin + points.length * lineHeight + margin, 400, 300);
-            saveCanvas();
-          };
-          if (uploadedImage.complete) {
-            ctx.drawImage(uploadedImage, 0, banner.height + margin + points.length * lineHeight + margin, 400, 300);
-            saveCanvas();
-          }
-        } else {
-          saveCanvas();
+          const imgY = banner.height + margin + listHeight + margin;
+          const imgX = (width - 400) / 2;
+          ctx.drawImage(uploadedImage, imgX, imgY, 400, 300);
         }
-      };
-    }
 
-    function saveCanvas() {
-      const canvas = document.getElementById("outputCanvas");
-      const link = document.createElement('a');
-      link.download = 'message.png';
-      link.href = canvas.toDataURL();
-      link.click();
+        const link = document.createElement('a');
+        link.download = 'message.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      };
     }
   </script>
 </body>
