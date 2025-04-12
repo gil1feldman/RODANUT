@@ -147,7 +147,7 @@
 
         const imageHeight = uploadedImage ? 320 : 0;
         const footerHeight = 50;
-        const totalHeight = banner.height + totalLines * lineHeight + imageHeight + margin * 5 + footerHeight;
+        const totalHeight = banner.height + totalLines * lineHeight + imageHeight + margin * 6 + footerHeight;
 
         canvas.width = width;
         canvas.height = totalHeight;
@@ -157,7 +157,7 @@
 
         ctx.drawImage(banner, 0, 0, width, banner.height);
 
-        let currentY = banner.height + margin;
+        let currentY = banner.height + margin * 2;  // התחלה נמוכה יותר
         ctx.font = "44px Arial";
 
         points.forEach((point, i) => {
@@ -175,7 +175,7 @@
 
         ctx.font = "26px Arial";
         ctx.fillStyle = "black";
-        ctx.fillText('מבוסס על הספר "רודנות בחסות החוק" של קים ליין שפלי', width - margin, currentY + margin);
+        ctx.fillText('מבוסס על הספר "רודנות בחסות החוק" של קים ליין שפלי', width - margin, currentY + margin * 2);  // רווח נוסף
 
         const link = document.createElement('a');
         link.download = 'message.png';
