@@ -60,8 +60,11 @@
     }
 
     label {
-      display: block;
-      margin-bottom: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 16px;
     }
 
     button {
@@ -115,16 +118,19 @@
 
     const checkboxContainer = document.getElementById("checkboxes");
     points.forEach((point, index) => {
+      const label = document.createElement("label");
+
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.id = "point" + index;
       checkbox.value = index;
-      const label = document.createElement("label");
-      label.htmlFor = checkbox.id;
-      label.textContent = (index + 1) + ". " + point;
-      checkboxContainer.appendChild(checkbox);
+
+      const textSpan = document.createElement("span");
+      textSpan.textContent = (index + 1) + ". " + point;
+
+      label.appendChild(checkbox);
+      label.appendChild(textSpan);
       checkboxContainer.appendChild(label);
-      checkboxContainer.appendChild(document.createElement("br"));
     });
 
     let uploadedImage = null;
