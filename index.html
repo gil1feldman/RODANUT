@@ -179,7 +179,8 @@
         if (uploadedImage) {
           const imgX = (width - imgWidth) / 2;
           ctx.drawImage(uploadedImage, imgX, currentY + margin, imgWidth, imgHeight);
-          currentY += imgHeight + margin;
+          currentY += imgHeight + 10;
+
         }
 
         ctx.font = "26px Arial";
