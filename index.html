@@ -41,10 +41,9 @@
 </head>
 <body>
   <img class="banner" src="https://raw.githubusercontent.com/gil1feldman/RODANUT/main/%D7%A8%D7%95%D7%93%D7%A0%D7%95%D7%AA_%D7%91%D7%90%D7%A0%D7%A8_%D7%A6%D7%A8.png" alt="באנר">
-  <h1>רודנות בחסות החוק - תיעוד</h1>
 
   <form id="messageForm">
-    <h3>סמן את הנקודות הרלוונטיות:</h3>
+    <h3>סמנו את הנקודות הרלוונטיות למהלך הנוכחי:</h3>
     <div id="checkboxes"></div>
     <br>
     <label>הדבק תמונה: <input type="file" id="imageInput" accept="image/*"></label>
@@ -157,7 +156,7 @@
 
         ctx.drawImage(banner, 0, 0, width, banner.height);
 
-        let currentY = banner.height + margin * 2;  // התחלה נמוכה יותר
+        let currentY = banner.height + margin * 2;
         ctx.font = "44px Arial";
 
         points.forEach((point, i) => {
@@ -175,7 +174,7 @@
 
         ctx.font = "26px Arial";
         ctx.fillStyle = "black";
-        ctx.fillText('מבוסס על הספר "רודנות בחסות החוק" של קים ליין שפלי', width - margin, currentY + margin * 2);  // רווח נוסף
+        ctx.fillText('מבוסס על הספר "רודנות בחסות החוק" של קים ליין שפלי', width - margin, currentY + margin * 2);
 
         const link = document.createElement('a');
         link.download = 'message.png';
