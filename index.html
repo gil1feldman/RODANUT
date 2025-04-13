@@ -144,7 +144,17 @@
           totalLines += estimateLineCount(ctx, (i + 1) + ". " + point, 760);
         });
 
-        const imageHeight = uploadedImage ? 320 : 0;
+        let imageHeight = 0;
+        let imgWidth = 0;
+        let imgHeight = 0;
+
+        if (uploadedImage) {
+          imgWidth = 400;
+          const imgRatio = uploadedImage.width / uploadedImage.height;
+          imgHeight = imgWidth / imgRatio;
+          imageHeight = imgHeight;
+        }
+
         const footerHeight = 50;
         const totalHeight = banner.height + totalLines * lineHeight + imageHeight + margin * 6 + footerHeight;
 
@@ -167,9 +177,9 @@
         });
 
         if (uploadedImage) {
-          const imgX = (width - 400) / 2;
-          ctx.drawImage(uploadedImage, imgX, currentY + margin, 400, 300);
-          currentY += 300 + margin;
+          const imgX = (width - imgWidth) / 2;
+          ctx.drawImage(uploadedImage, imgX, currentY + margin, imgWidth, imgHeight);
+          currentY += imgHeight + margin;
         }
 
         ctx.font = "26px Arial";
