@@ -2,40 +2,86 @@
 <html lang="he">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>רודנות בחסות החוק - תיעוד</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       direction: rtl;
       padding: 20px;
+      box-sizing: border-box;
+      max-width: 100%;
     }
+
     .highlight {
       color: red;
       font-weight: bold;
     }
+
     .preview {
       margin-top: 30px;
       border-top: 2px solid #ccc;
       padding-top: 20px;
+      width: 100%;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
     }
+
     .banner {
       width: 100%;
+      height: auto;
       max-width: 800px;
       margin-bottom: 20px;
       display: block;
       margin-left: auto;
       margin-right: auto;
     }
+
     .centered {
       text-align: center;
     }
+
     img.preview-img {
-      max-width: 400px;
-      margin: 20px auto;
+      max-width: 100%;
+      height: auto;
       display: block;
+      margin: 20px auto;
     }
+
     #canvasContainer {
       display: none;
+    }
+
+    form {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    button {
+      margin: 5px 0;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      h3 {
+        font-size: 18px;
+      }
+
+      button {
+        font-size: 16px;
+      }
     }
   </style>
 </head>
@@ -180,7 +226,6 @@
           const imgX = (width - imgWidth) / 2;
           ctx.drawImage(uploadedImage, imgX, currentY + margin, imgWidth, imgHeight);
           currentY += imgHeight + 10;
-
         }
 
         ctx.font = "26px Arial";
